@@ -35,10 +35,6 @@ class KtxConan(ConanFile):
         return "source_subfolder"
 
     @property
-    def _build_subfolder(self):
-        return "build_subfolder"
-
-    @property
     def _has_sse_support(self):
         return self.settings.arch in ["x86", "x86_64"]
 
@@ -84,7 +80,7 @@ class KtxConan(ConanFile):
         self._cmake.definitions["KTX_FEATURE_TESTS"] = False
         if self._has_sse_support:
             self._cmake.definitions["BASISU_SUPPORT_SSE"] = self.options.sse
-        self._cmake.configure(build_folder=self._build_subfolder)
+        self._cmake.configure()
         return self._cmake
 
     def package(self):
