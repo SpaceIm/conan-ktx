@@ -2,8 +2,6 @@
 
 #include <stdio.h>
 
-// taken from: https://www.khronos.org/ktx/documentation/libktx/index.html
-
 int main(int argc, char **argv)
 {
     if (argc < 2) {
