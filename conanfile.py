@@ -16,10 +16,12 @@ class KtxConan(ConanFile):
     options = {
         "shared": [True, False],
         "fPIC": [True, False],
+        "sse": [True, False],
     }
     default_options = {
         "shared": False,
         "fPIC": True,
+        "sse": True,
     }
 
     exports_sources = ["CMakeLists.txt", "patches/**"]
@@ -34,9 +36,15 @@ class KtxConan(ConanFile):
     def _build_subfolder(self):
         return "build_subfolder"
 
+    @property
+    def _has_sse_support(self):
+        return self.settings.arch in ["x86", "x86_64"]
+
     def config_options(self):
         if self.settings.os == "Windows":
             del self.options.fPIC
+        if not self._has_sse_support:
+            del self.options.sse
 
     def configure(self):
         if self.options.shared:
@@ -68,7 +76,8 @@ class KtxConan(ConanFile):
         self._cmake.definitions["KTX_FEATURE_LOADTEST_APPS"] = False
         self._cmake.definitions["KTX_FEATURE_STATIC_LIBRARY"] = not self.options.shared
         self._cmake.definitions["KTX_FEATURE_TESTS"] = False
-        self._cmake.definitions["BUILD_TESTING"] = False
+        if self._has_sse_support:
+            self._cmake.definitions["BASISU_SUPPORT_SSE"] = self.options.sse
         self._cmake.configure(build_folder=self._build_subfolder)
         return self._cmake
 
