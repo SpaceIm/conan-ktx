@@ -100,6 +100,7 @@ class KtxConan(ConanFile):
         elif self.settings.os == "Linux":
             self.cpp_info.components["libktx"].system_libs.extend(["m", "dl", "pthread"])
 
-        bin_path = os.path.join(self.package_folder, "bin")
-        self.output.info("Appending PATH environment variable: {}".format(bin_path))
-        self.env_info.PATH.append(bin_path)
+        if not self.settings.os in ["iOS", "Android", "Emscripten"]:
+            bin_path = os.path.join(self.package_folder, "bin")
+            self.output.info("Appending PATH environment variable: {}".format(bin_path))
+            self.env_info.PATH.append(bin_path)
