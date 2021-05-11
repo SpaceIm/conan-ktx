@@ -97,3 +97,7 @@ class KtxConan(ConanFile):
             self.cpp_info.components["libktx"].defines.append("BASISU_NO_ITERATOR_DEBUG_LEVEL")
         elif self.settings.os == "Linux":
             self.cpp_info.components["libktx"].system_libs.extend(["m", "dl", "pthread"])
+
+        bin_path = os.path.join(self.package_folder, "bin")
+        self.output.info("Appending PATH environment variable: {}".format(bin_path))
+        self.env_info.PATH.append(bin_path)
