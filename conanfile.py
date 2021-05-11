@@ -64,6 +64,8 @@ class KtxConan(ConanFile):
         if self._cmake:
             return self._cmake
         self._cmake = CMake(self)
+        self._cmake.definitions["KTX_FEATURE_DOC"] = False
+        self._cmake.definitions["KTX_FEATURE_LOADTEST_APPS"] = False
         self._cmake.definitions["KTX_FEATURE_STATIC_LIBRARY"] = not self.options.shared
         self._cmake.definitions["KTX_FEATURE_TESTS"] = False
         self._cmake.definitions["BUILD_TESTING"] = False
