@@ -88,12 +88,12 @@ class KtxConan(ConanFile):
         self.cpp_info.components["libktx"].defines = [
             "KTX_FEATURE_KTX1", "KTX_FEATURE_KTX2", "KTX_FEATURE_WRITE"
         ]
-        if self.settings.os == "Windows":
-            self.cpp_info.components["libktx"].defines.append("BASISU_NO_ITERATOR_DEBUG_LEVEL")
         if not self.options.shared:
             self.cpp_info.components["libktx"].defines.append("KHRONOS_STATIC")
             stdcpp_library = tools.stdcpp_library(self)
             if stdcpp_library:
                 self.cpp_info.components["libktx"].system_libs.append(stdcpp_library)
-        if self.settings.os == "Linux":
+        if self.settings.os == "Windows":
+            self.cpp_info.components["libktx"].defines.append("BASISU_NO_ITERATOR_DEBUG_LEVEL")
+        elif self.settings.os == "Linux":
             self.cpp_info.components["libktx"].system_libs.extend(["m", "dl", "pthread"])
