@@ -17,11 +17,13 @@ class KtxConan(ConanFile):
         "shared": [True, False],
         "fPIC": [True, False],
         "sse": [True, False],
+        "tools": [True, False],
     }
     default_options = {
         "shared": False,
         "fPIC": True,
         "sse": True,
+        "tools": True,
     }
 
     exports_sources = ["CMakeLists.txt", "patches/**"]
@@ -45,6 +47,9 @@ class KtxConan(ConanFile):
             del self.options.fPIC
         if not self._has_sse_support:
             del self.options.sse
+        if self.settings.os in ["iOS", "Android", "Emscripten"]:
+            # tools are not build by default if iOS, Android or Emscripten
+            self.options.tools = False
 
     def configure(self):
         if self.options.shared:
@@ -72,6 +77,7 @@ class KtxConan(ConanFile):
         if self._cmake:
             return self._cmake
         self._cmake = CMake(self)
+        self._cmake.definitions["KTX_FEATURE_TOOLS"] = self.options.tools
         self._cmake.definitions["KTX_FEATURE_DOC"] = False
         self._cmake.definitions["KTX_FEATURE_LOADTEST_APPS"] = False
         self._cmake.definitions["KTX_FEATURE_STATIC_LIBRARY"] = not self.options.shared
@@ -109,7 +115,7 @@ class KtxConan(ConanFile):
         elif self.settings.os == "Linux":
             self.cpp_info.components["libktx"].system_libs.extend(["m", "dl", "pthread"])
 
-        if not self.settings.os in ["iOS", "Android", "Emscripten"]:
+        if self.options.tools:
             bin_path = os.path.join(self.package_folder, "bin")
             self.output.info("Appending PATH environment variable: {}".format(bin_path))
             self.env_info.PATH.append(bin_path)
