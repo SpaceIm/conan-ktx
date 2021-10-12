@@ -8,7 +8,7 @@ class KtxConan(ConanFile):
     name = "ktx"
     description = "Khronos Texture library and tool."
     license = "Apache-2.0"
-    topics = ("conan", "ktx", "texture", "khronos")
+    topics = ("ktx", "texture", "khronos")
     homepage = "https://github.com/KhronosGroup/KTX-Software"
     url = "https://github.com/conan-io/conan-center-index"
 
@@ -50,12 +50,14 @@ class KtxConan(ConanFile):
     def configure(self):
         if self.options.shared:
             del self.options.fPIC
-        if self.settings.compiler.get_safe("cppstd"):
-            tools.check_min_cppstd(self, 11)
 
     def requirements(self):
         self.requires("lodepng/cci.20200615")
         self.requires("zstd/1.4.9")
+
+    def validate(self):
+        if self.settings.compiler.get_safe("cppstd"):
+            tools.check_min_cppstd(self, 11)
 
     def source(self):
         tools.get(**self.conan_data["sources"][self.version],
